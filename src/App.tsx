@@ -1,33 +1,34 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Navigation } from './components/layout/Navigation';
-import { Features } from './components/layout/Features';
-import { ImageUpload } from './components/grading/ImageUpload';
-import { GradingResults } from './components/grading/GradingResults';
-import { ProductFilters } from './components/marketplace/ProductFilters';
-import { ProductCard } from './components/marketplace/ProductCard';
-import { AlertCircle } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { Navigation } from "./components/layout/Navigation";
+import { Features } from "./components/layout/Features";
+import { ImageUpload } from "./components/grading/ImageUpload";
+import { GradingResults } from "./components/grading/GradingResults";
+import { ProductFilters } from "./components/marketplace/ProductFilters";
+import { ProductCard } from "./components/marketplace/ProductCard";
+import { AlertCircle } from "lucide-react";
 
-// Import sample data
-import { vendors, products } from './data/sampleData';
+import { vendors, products } from "./data/sampleData";
 
 function App() {
-  const [activeTab, setActiveTab] = useState('grade');
-  const [selectedGrade, setSelectedGrade] = useState<string>('all');
+  const [activeTab, setActiveTab] = useState("grade");
+  const [selectedGrade, setSelectedGrade] = useState<string>("all");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isGrading, setIsGrading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [showCamera, setShowCamera] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
 
-  const filteredProducts = selectedGrade === 'all' 
-    ? products 
-    : products.filter(product => product.grade === selectedGrade);
+  const filteredProducts =
+    selectedGrade === "all"
+      ? products
+      : products.filter((product) => product.grade === selectedGrade);
 
   useEffect(() => {
     return () => {
       if (stream) {
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       }
     };
   }, [stream]);
@@ -48,28 +49,42 @@ function App() {
       setCameraError(null);
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: 'environment',
+          facingMode: "environment",
           width: { ideal: 1920 },
-          height: { ideal: 1080 }
-        }
+          height: { ideal: 1080 },
+        },
       });
-      
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-      }
-      setStream(mediaStream);
+
+      console.log("taking feed", mediaStream);
       setShowCamera(true);
+      setStream(mediaStream);
+
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+          videoRef.current.play().catch((error) => {
+            console.error("Error playing video:", error);
+          });
+
+          console.log("VideoRef assigned:", videoRef.current);
+        } else {
+          console.warn("videoRef is still null after timeout");
+        }
+      }, 500);
+
       setPreviewImage(null);
       setIsGrading(false);
     } catch (error) {
-      console.error('Error accessing camera:', error);
-      setCameraError('Unable to access camera. Please ensure you have granted camera permissions.');
+      console.error("Error accessing camera:", error);
+      setCameraError(
+        "Unable to access camera. Please ensure you have granted camera permissions."
+      );
     }
   };
 
   const stopCamera = () => {
     if (stream) {
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach((track) => track.stop());
       setStream(null);
     }
     setShowCamera(false);
@@ -79,34 +94,40 @@ function App() {
   const capturePhoto = () => {
     if (videoRef.current) {
       const video = videoRef.current;
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      const context = canvas.getContext('2d');
+      const context = canvas.getContext("2d");
       if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageUrl = canvas.toDataURL('image/jpeg', 0.8);
+        const imageUrl = canvas.toDataURL("image/jpeg", 0.8);
         setPreviewImage(imageUrl);
         stopCamera();
       }
+      videoRef.current.srcObject = null;
     }
   };
 
   const resetImage = () => {
     setPreviewImage(null);
-    setIsGrading(false);
+    // setIsGrading(false);
     setCameraError(null);
   };
 
   const startGrading = () => {
-    setIsGrading(true);
+    console.log("This is the captured image", previewImage);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsGrading(true);
+      setIsLoading(false);
+    }, 3000);
   };
 
-  const handleContactClick = (vendor: typeof vendors[0]) => {
+  const handleContactClick = (vendor: (typeof vendors)[0]) => {
     const message = encodeURIComponent(
       `Hello ${vendor.name}, I'm interested in your tomatoes listed on TomatoGrade AI. Could you provide more information?`
     );
-    window.open(`https://wa.me/${vendor.phone}?text=${message}`, '_blank');
+    window.open(`https://wa.me/${vendor.phone}?text=${message}`, "_blank");
   };
 
   return (
@@ -116,28 +137,28 @@ function App() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex space-x-4 mb-8">
           <button
-            onClick={() => setActiveTab('grade')}
+            onClick={() => setActiveTab("grade")}
             className={`px-4 py-2 rounded-lg ${
-              activeTab === 'grade'
-                ? 'bg-red-600 text-white'
-                : 'bg-white text-gray-600 hover:bg-gray-50'
+              activeTab === "grade"
+                ? "bg-red-600 text-white"
+                : "bg-white text-gray-600 hover:bg-gray-50"
             }`}
           >
             Quality Grading
           </button>
           <button
-            onClick={() => setActiveTab('marketplace')}
+            onClick={() => setActiveTab("marketplace")}
             className={`px-4 py-2 rounded-lg ${
-              activeTab === 'marketplace'
-                ? 'bg-red-600 text-white'
-                : 'bg-white text-gray-600 hover:bg-gray-50'
+              activeTab === "marketplace"
+                ? "bg-red-600 text-white"
+                : "bg-white text-gray-600 hover:bg-gray-50"
             }`}
           >
             Marketplace
           </button>
         </div>
 
-        {activeTab === 'grade' ? (
+        {activeTab === "grade" ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <ImageUpload
               previewImage={previewImage}
@@ -151,7 +172,7 @@ function App() {
               onStartGrading={startGrading}
               videoRef={videoRef}
             />
-            <GradingResults isGrading={isGrading} />
+            <GradingResults isGrading={isGrading} isLoading={isLoading}/>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
