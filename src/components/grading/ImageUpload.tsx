@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { Upload, RefreshCw } from 'lucide-react';
+import React, { useEffect, useRef, useState } from "react";
+import { Upload, RefreshCw } from "lucide-react";
 
 interface ImageUploadProps {
   previewImage: string | null;
@@ -28,21 +28,28 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    const file = event.dataTransfer.files?.[0];
-    if (file && file.type.startsWith('image/')) {
-      const imageUrl = URL.createObjectURL(file);
-      const changeEvent = {
-        target: { files: [file] }
-      } as React.ChangeEvent<HTMLInputElement>;
-      onFileUpload(changeEvent);
-    }
-  };
-
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
   };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files?.[0];
+
+    if (file && file.type.startsWith("image/")) {
+      const fileList = new DataTransfer();
+      fileList.items.add(file);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.files = fileList.files;
+
+        const changeEvent = new Event("change", { bubbles: true });
+        fileInputRef.current.dispatchEvent(changeEvent);
+      }
+    }
+  };
+
+
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">

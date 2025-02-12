@@ -1,15 +1,21 @@
 import React from 'react';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Loader } from 'lucide-react';
 
 interface GradingResultsProps {
   isGrading: boolean;
+  isLoading: boolean;
 }
 
-export const GradingResults: React.FC<GradingResultsProps> = ({ isGrading }) => {
+export const GradingResults: React.FC<GradingResultsProps> = ({ isGrading, isLoading }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">
       <h2 className="text-xl font-semibold mb-4">Grading Results</h2>
-      {isGrading ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center h-48">
+          <Loader className="h-8 w-8 text-gray-500 animate-spin" />
+          <span className="ml-2 text-gray-500">Grading in progress...</span>
+        </div>
+      ) : isGrading ? (
         <div className="space-y-4">
           <div className="p-4 bg-gray-50 rounded-lg">
             <div className="flex justify-between items-center">
