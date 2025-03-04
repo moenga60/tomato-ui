@@ -1,41 +1,52 @@
 import React, { useState } from "react";
 import { UserPlus, Mail, Lock, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 // import axios from "axios";
 
 const Register: React.FC = () => {
-  const [name, setName] = useState("");
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password2, setPassword2] = useState("");
+  const [errors, setError] = useState<String[]>([]);
 
   const navigate = useNavigate();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const data = {
-      username: "Solo",
-      password: "SecurePass123!",
-     email: "johndoe@example.com",
-      first_name: "John",
-      last_name: "Doe",
-      user_type: "farmer",
-      phone_number: "+1234567890",
-      location: "Nairobi, Kenya"
-    }
+    const formData = {
+      username,
+      password,
+      password2,
+      email,
+      first_name,
+      last_name,
+    };
 
     try {
-      console.log(data)
-      const response = await fetch(
-        "http://localhost:8000/api/users/register/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
-      console.log(response);
+      console.log(formData);
+      const response = await fetch("http://localhost:8000/api/users/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Success:", data.message);
+        toast.success(data.message);
+        setError([]);
+        navigate("/login");
+      } else {
+        const errorMessages = Object.values(data).flat() as string[];
+        setError(errorMessages);
+        console.log("Errors:", errorMessages);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -56,31 +67,81 @@ const Register: React.FC = () => {
           </h2>
           <p className="text-gray-600 mt-2">Join us today and get started</p>
         </div>
-
+        {errors.length > 0 &&
+          errors.map((error, i) => (
+            <p key={i} className="text-red-600 text-xs uppercase text-center mb-2">
+              {error}
+            </p>
+          ))}
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-6 md:space-y-0 md:flex gap-4">
+            <div>
+              <label
+                htmlFor="firstname"
+                className="block text-sm font-medium text-gray-700"
+              >
+                First Name
+              </label>
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="firstname"
+                  type="text"
+                  required
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                  placeholder="John"
+                  value={first_name}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                htmlFor="lastname"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Last Name
+              </label>
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="lastname"
+                  type="text"
+                  required
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                  placeholder="Doe"
+                  value={last_name}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
           <div>
             <label
-              htmlFor="name"
+              htmlFor="username"
               className="block text-sm font-medium text-gray-700"
             >
-              Full Name
+              Username
             </label>
             <div className="mt-1 relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <User className="h-5 w-5 text-gray-400" />
               </div>
               <input
-                id="name"
+                id="username"
                 type="text"
                 required
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
-                placeholder="John Doe"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                placeholder="John12"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
           </div>
-
           <div>
             <label
               htmlFor="email"
@@ -104,49 +165,51 @@ const Register: React.FC = () => {
             </div>
           </div>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <div className="mt-1 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-gray-400" />
+          <div className="space-y-6 md:space-y-0 md:flex gap-4">
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Password
+              </label>
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="password"
+                  type="password"
+                  required
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </div>
-              <input
-                id="password"
-                type="password"
-                required
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
             </div>
-          </div>
 
-          <div>
-            <label
-              htmlFor="confirm-password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Confirm Password
-            </label>
-            <div className="mt-1 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-gray-400" />
+            <div>
+              <label
+                htmlFor="confirm-password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Confirm Password
+              </label>
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="confirm-password"
+                  type="password"
+                  required
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
+                  placeholder="••••••••"
+                  value={password2}
+                  onChange={(e) => setPassword2(e.target.value)}
+                />
               </div>
-              <input
-                id="confirm-password"
-                type="password"
-                required
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
-                placeholder="••••••••"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
             </div>
           </div>
 

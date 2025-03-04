@@ -6,9 +6,7 @@ import { GradingResults } from "../components/grading/GradingResults";
 import { ProductFilters } from "../components/marketplace/ProductFilters";
 import { ProductCard } from "../components/marketplace/ProductCard";
 import { AlertCircle } from "lucide-react";
-
 import { vendors, products } from "../data/sampleData";
-import axios from "axios";
 
 function Main() {
   const [activeTab, setActiveTab] = useState("grade");
@@ -130,19 +128,6 @@ function Main() {
     window.open(`https://wa.me/${vendor.phone}?text=${message}`, "_blank");
   };
 
-  const Testing = async() => {
-    try {
-      const response = await axios.get("http://localhost:8000/api/users/");
-      console.log(response)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  useEffect(() => {
-    Testing();
-  })
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
@@ -185,7 +170,7 @@ function Main() {
               onStartGrading={startGrading}
               videoRef={videoRef}
             />
-            <GradingResults isGrading={isGrading} isLoading={isLoading}/>
+            <GradingResults isGrading={isGrading} isLoading={isLoading} />
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

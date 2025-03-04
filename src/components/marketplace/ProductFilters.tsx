@@ -26,7 +26,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
             <h3 className="font-medium">Quality Grade</h3>
             <Filter className="h-4 w-4 text-gray-400" />
           </div>
-          <div className="space-y-2">
+          <div className="flex justify-center gap-4 lg:space-y-2 lg:flex-col">
             {['all', 'premium', 'standard', 'economy'].map((grade) => (
               <label key={grade} className="flex items-center">
                 <input
