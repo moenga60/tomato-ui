@@ -1,6 +1,6 @@
 import { axiosInstance } from '../config/axios';
 import { ENDPOINTS } from '../config/endpoints';
-import { LoginRequest, LoginResponse } from '../types/auth';
+import { LoginRequest, LoginResponse  } from '../types/requests';
 
 export const authService = {
     login: async (data: LoginRequest): Promise<LoginResponse> => {
