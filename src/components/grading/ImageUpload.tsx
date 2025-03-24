@@ -111,7 +111,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   };
 
   return (
-    <div className="flex">
+    <div className="md:flex">
       {/* Main Content */}
       <div className="bg-white p-6 rounded-lg shadow-sm flex-1">
         <h2 className="text-xl font-semibold mb-4">Grade Your Tomatoes</h2>
@@ -203,14 +203,17 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       </div>
 
       {/* Grading Results Sidebar */}
-      {gradingResult.grade && (
-        <GradingResults
-          isGrading={true}
-          isLoading={loading}
-          grade={gradingResult.grade}
-          overallScore={gradingResult.overall_score}
-        />
-      )}
-    </div>
+      
+
+        {gradingResult.grade && (
+          <GradingResults
+            isGrading={true}
+            isLoading={loading}
+            grade={gradingResult.grade}
+            overallScore={gradingResult.overall_score}
+          />
+        )}
+      </div>
+    
   );
 };
