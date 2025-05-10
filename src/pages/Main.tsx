@@ -173,7 +173,7 @@ function Main() {
             <GradingResults isGrading={isGrading} isLoading={isLoading} />
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
             <ProductFilters
               selectedGrade={selectedGrade}
               onGradeChange={setSelectedGrade}

@@ -3,15 +3,15 @@ export const vendors = [
       id: 1,
       name: "John Kamau",
       location: "Kiambu County",
-      phone: "254712345678",
+      phone: "+254795822763",
       rating: 4.8,
       totalSales: 1500
     },
     {
       id: 2,
-      name: "Mary Wanjiku",
+      name: "Bbabra",
       location: "Nyeri County",
-      phone: "254723456789",
+      phone: "+254757325585",
       rating: 4.9,
       totalSales: 2000
     },

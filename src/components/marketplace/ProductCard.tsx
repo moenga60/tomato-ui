@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapPin, ShoppingBag, User, BarChart3, MessageCircle } from 'lucide-react';
 
 interface Vendor {
@@ -47,7 +47,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onContact }) 
               {product.grade}
             </span>
           </div>
-          
+
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center text-gray-600">
               <MapPin className="h-4 w-4 mr-1" />
